@@ -26,17 +26,17 @@ class GildedRose(object):
         if item.name != self.AGED_BRIE and item.name != self.BACKSTAGE_PASSES:
                 if item.quality > 0:
                     if item.name != self.SULFURAS:
-                        item.quality = item.quality - 1
+                        self._adjust_quality(item, -1)
         else:
             if item.quality < 50:
                 item.quality = item.quality + 1
                 if item.name == self.BACKSTAGE_PASSES:
                     if item.sell_in < 11:
                         if item.quality < 50:
-                            item.quality = item.quality + 1
+                            self._adjust_quality(item, 1)
                     if item.sell_in < 6:
                         if item.quality < 50:
-                            item.quality = item.quality + 1
+                            self._adjust_quality(item, 1)
         if item.name != self.SULFURAS:
             item.sell_in = item.sell_in - 1
         if item.sell_in < 0:
@@ -44,11 +44,15 @@ class GildedRose(object):
                 if item.name != self.BACKSTAGE_PASSES:
                     if item.quality > 0:
                         if item.name != self.SULFURAS:
-                            item.quality = item.quality - 1
+                            self._adjust_quality(item, -1)
                 else:
                     item.quality = item.quality - item.quality
             else:
                 if item.quality < 50:
-                    item.quality = item.quality + 1
+                    self._adjust_quality(item, 1)
+    
+    def _adjust_quality(self, item: Item, value: int):
+        item.quality += value
+
 
 

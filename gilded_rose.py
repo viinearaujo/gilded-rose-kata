@@ -32,11 +32,9 @@ class GildedRose(object):
                 item.quality = item.quality + 1
                 if item.name == self.BACKSTAGE_PASSES:
                     if item.sell_in < 11:
-                        if item.quality < 50:
-                            self._adjust_quality(item, 1)
+                        self._adjust_quality(item, 1)
                     if item.sell_in < 6:
-                        if item.quality < 50:
-                            self._adjust_quality(item, 1)
+                        self._adjust_quality(item, 1)
         if item.name != self.SULFURAS:
             item.sell_in = item.sell_in - 1
         if item.sell_in < 0:
@@ -48,11 +46,13 @@ class GildedRose(object):
                 else:
                     item.quality = item.quality - item.quality
             else:
-                if item.quality < 50:
-                    self._adjust_quality(item, 1)
+                self._adjust_quality(item, 1)
     
     def _adjust_quality(self, item: Item, value: int):
-        item.quality += value
+        new_quality = item.quality + value
+        should_adjust = True if new_quality >= 0 and new_quality <= 50 else False
+        if should_adjust:
+            item.quality = new_quality
 
 
 

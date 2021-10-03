@@ -14,6 +14,7 @@ class GildedRose(object):
     AGED_BRIE = 'Aged Brie'
     BACKSTAGE_PASSES = 'Backstage passes to a TAFKAL80ETC concert'
     SULFURAS = 'Sulfuras, Hand of Ragnaros'
+    CONJURED = 'Conjured Mana Cake'
 
     def __init__(self, items):
         self.items = items
@@ -23,10 +24,11 @@ class GildedRose(object):
             self.update_item_quality(item)
 
     def update_item_quality(self, item):
+        decrease_quality_value = -2 if item.name == self.CONJURED else -1
         if item.name != self.AGED_BRIE and item.name != self.BACKSTAGE_PASSES:
                 if item.quality > 0:
                     if item.name != self.SULFURAS:
-                        self._adjust_quality(item, -1)
+                        self._adjust_quality(item, decrease_quality_value)
         else:
             if item.quality < 50:
                 item.quality = item.quality + 1
@@ -42,7 +44,7 @@ class GildedRose(object):
                 if item.name != self.BACKSTAGE_PASSES:
                     if item.quality > 0:
                         if item.name != self.SULFURAS:
-                            self._adjust_quality(item, -1)
+                            self._adjust_quality(item, decrease_quality_value)
                 else:
                     item.quality = item.quality - item.quality
             else:

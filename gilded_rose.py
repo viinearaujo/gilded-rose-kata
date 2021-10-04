@@ -37,21 +37,23 @@ class GildedRose(object):
             self._adjust_quality(item, 1)
 
         if item.name == self.BACKSTAGE_PASSES:
-            self._adjust_quality(item, 1)
-            if item.sell_in < 11:
-                self._adjust_quality(item, 1)
-            if item.sell_in < 6:
-                self._adjust_quality(item, 1)
+            self._handle_backstage_passes_quality(item, after_sellin)
 
         if item.name != self.SULFURAS:
-            item.sell_in = item.sell_in - 1
+            item.sell_in -= 1
 
         if after_sellin:
             if item.name == self.AGED_BRIE:
                 self._adjust_quality(item, 1)
-            else:
-                if item.name == self.BACKSTAGE_PASSES:
-                    item.quality = item.quality - item.quality
+
+    def _handle_backstage_passes_quality(self, item: Item, after_sellin: bool) -> None:
+        self._adjust_quality(item, 1)
+        if item.sell_in < 11:
+            self._adjust_quality(item, 1)
+        if item.sell_in < 6:
+            self._adjust_quality(item, 1)
+        if after_sellin:
+            item.quality = item.quality - item.quality
 
     def _set_decrease_quality_value(self, item: Item, after_sellin: bool) -> int:
         decrease_quality_value = -2 if item.name == self.CONJURED else -1

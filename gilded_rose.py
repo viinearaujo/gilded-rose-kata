@@ -24,10 +24,12 @@ class GildedRose(object):
             self.update_item_quality(item)
 
     def update_item_quality(self, item):
-        decrease_quality_value = -2 if item.name == self.CONJURED else -1
+        after_sellin = item.sell_in < 1
+        decrease_quality_value = self._set_decrease_quality_value(item, after_sellin)
         quality_should_drop = item.name != self.AGED_BRIE \
                             and item.name != self.BACKSTAGE_PASSES \
                             and item.name != self.SULFURAS
+
         if quality_should_drop:
             self._adjust_quality(item, decrease_quality_value)
 
@@ -43,17 +45,21 @@ class GildedRose(object):
 
         if item.name != self.SULFURAS:
             item.sell_in = item.sell_in - 1
-        if item.sell_in < 0:
-            if item.name != self.AGED_BRIE:
-                if item.name != self.BACKSTAGE_PASSES:
-                        if item.name != self.SULFURAS:
-                            self._adjust_quality(item, decrease_quality_value)
-                else:
-                    item.quality = item.quality - item.quality
-            else:
+
+        if after_sellin:
+            if item.name == self.AGED_BRIE:
                 self._adjust_quality(item, 1)
+            else:
+                if item.name == self.BACKSTAGE_PASSES:
+                    item.quality = item.quality - item.quality
+
+    def _set_decrease_quality_value(self, item: Item, after_sellin: bool) -> int:
+        decrease_quality_value = -2 if item.name == self.CONJURED else -1
+        if after_sellin:
+            decrease_quality_value *= 2
+        return decrease_quality_value
     
-    def _adjust_quality(self, item: Item, value: int):
+    def _adjust_quality(self, item: Item, value: int) -> None:
         new_quality = item.quality + value
         should_adjust = True if new_quality >= 0 and new_quality <= 50 else False
         if should_adjust:
